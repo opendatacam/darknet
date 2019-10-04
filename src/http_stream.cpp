@@ -290,7 +290,7 @@ void send_json(detection *dets, int nboxes, int classes, char **names, long long
         char *send_buf = detection_to_json(dets, nboxes, classes, names, frame_id, NULL);
 
         send_json_custom(send_buf, port, timeout);
-        std::cout << " JSON-stream sent. \n";
+        //std::cout << " JSON-stream sent. \n";
 
         free(send_buf);
     }
@@ -500,7 +500,7 @@ void send_mjpeg(mat_cv* mat, int port, int timeout, int quality)
         static MJPG_sender wri(port, timeout, quality);
         //cv::Mat mat = cv::cvarrToMat(ipl);
         wri.write(*mat);
-        std::cout << " MJPEG-stream sent. \n";
+        //std::cout << " MJPEG-stream sent. \n";
     }
     catch (...) {
         cerr << " Error in send_mjpeg() function \n";
