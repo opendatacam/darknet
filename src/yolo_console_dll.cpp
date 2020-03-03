@@ -22,6 +22,8 @@
 
 #include "yolo_v2_class.hpp"    // imported functions from DLL
 
+#include "http_stream.h"
+
 #ifdef OPENCV
 #ifdef ZED_STEREO
 #include <sl/Camera.hpp>
@@ -283,10 +285,10 @@ int main(int argc, char *argv[])
     auto obj_names = objects_names_from_file(names_file);
     std::string out_videofile = "result.avi";
     bool const save_output_videofile = false;   // true - for history
-    bool const send_network = false;        // true - for remote detection
+    bool const send_network = true;        // true - for remote detection
     bool const use_kalman_filter = false;   // true - for stationary camera
 
-    bool detection_sync = true;             // true - for video-file
+    bool detection_sync = false;             // true - for video-file
 #ifdef TRACK_OPTFLOW    // for slow GPU
     detection_sync = false;
     Tracker_optflow tracker_flow;
@@ -307,13 +309,11 @@ int main(int argc, char *argv[])
 
             std::string const file_ext = filename.substr(filename.find_last_of(".") + 1);
             std::string const protocol = filename.substr(0, 7);
-            if (file_ext == "avi" || file_ext == "mp4" || file_ext == "mjpg" || file_ext == "mov" ||     // video file
-                protocol == "rtmp://" || protocol == "rtsp://" || protocol == "http://" || protocol == "https:/" ||    // video network stream
-                filename == "zed_camera" || file_ext == "svo" || filename == "web_camera")   // ZED stereo camera
+            if (true)   // Force into this mode
 
             {
-                if (protocol == "rtsp://" || protocol == "http://" || protocol == "https:/" || filename == "zed_camera" || filename == "web_camera")
-                    detection_sync = false;
+                if (file_ext == "avi" || file_ext == "mp4" || file_ext == "mjpg" || file_ext == "mov")
+                    detection_sync = true;
 
                 cv::Mat cur_frame;
                 std::atomic<int> fps_cap_counter(0), fps_det_counter(0);
@@ -550,10 +550,14 @@ int main(int argc, char *argv[])
 
                         //small_preview.set(draw_frame, result_vec);
                         //large_preview.set(draw_frame, result_vec);
-                        draw_boxes(draw_frame, result_vec, obj_names, current_fps_det, current_fps_cap);
+                        //draw_boxes(draw_frame, result_vec, obj_names, current_fps_det, current_fps_cap);
+                        // Uncomment to show results in console
                         //show_console_result(result_vec, obj_names, detection_data.frame_id);
                         //large_preview.draw(draw_frame);
                         //small_preview.draw(draw_frame, true);
+                        int timeout = 400000;
+                        int jpeg_quality = 40;    // 1 - 100
+                        send_mjpeg((mat_cv*)&cap_frame, 8090, timeout, jpeg_quality);
 
                         detection_data.result_vec = result_vec;
                         detection_data.draw_frame = draw_frame;
@@ -619,12 +623,12 @@ int main(int argc, char *argv[])
                     //    cv::putText(draw_frame, "extrapolate", cv::Point2f(10, 40), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, cv::Scalar(50, 50, 0), 2);
                     //}
 
-                    cv::imshow("window name", draw_frame);
-                    int key = cv::waitKey(3);    // 3 or 16ms
-                    if (key == 'f') show_small_boxes = !show_small_boxes;
-                    if (key == 'p') while (true) if (cv::waitKey(100) == 'p') break;
-                    //if (key == 'e') extrapolate_flag = !extrapolate_flag;
-                    if (key == 27) { exit_flag = true;}
+                    //cv::imshow("window name", draw_frame);
+                    // int key = cv::waitKey(3);    // 3 or 16ms
+                    // if (key == 'f') show_small_boxes = !show_small_boxes;
+                    // if (key == 'p') while (true) if (cv::waitKey(100) == 'p') break;
+                    // //if (key == 'e') extrapolate_flag = !extrapolate_flag;
+                    // if (key == 27) { exit_flag = true;}
 
                     //std::cout << " current_fps_det = " << current_fps_det << ", current_fps_cap = " << current_fps_cap << std::endl;
                 } while (!detection_data.exit_flag);

@@ -535,7 +535,7 @@ void send_mjpeg(mat_cv* mat, int port, int timeout, int quality)
         static MJPG_sender wri(port, timeout, quality);
         //cv::Mat mat = cv::cvarrToMat(ipl);
         wri.write(*(cv::Mat*)mat);
-        std::cout << " MJPEG-stream sent. \n";
+        //std::cout << " MJPEG-stream sent. \n";
     }
     catch (...) {
         cerr << " Error in send_mjpeg() function \n";
