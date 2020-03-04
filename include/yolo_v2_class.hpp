@@ -207,16 +207,19 @@ public:
 
             send_str += buf;
 
-            if (!std::isnan(i.z_3d)) {
-                sprintf(buf, "\n    , \"coordinates_in_meters\":{\"x_3d\":%.2f, \"y_3d\":%.2f, \"z_3d\":%.2f}",
-                    i.x_3d, i.y_3d, i.z_3d);
-                send_str += buf;
-            }
+            // if (!std::isnan(i.z_3d)) {
+            //     sprintf(buf, "\n    , \"coordinates_in_meters\":{\"x_3d\":%.2f, \"y_3d\":%.2f, \"z_3d\":%.2f}",
+            //         i.x_3d, i.y_3d, i.z_3d);
+            //     send_str += buf;
+            // }
 
-            send_str += "}\n";
+            send_str += "},";
 
             free(buf);
         }
+
+        // Remove last coma of objects list to have valid JSON
+        send_str.pop_back();
 
         //send_str +=  "\n ] \n}, \n";
         send_str += "\n ] \n}";
