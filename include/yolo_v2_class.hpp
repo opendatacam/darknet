@@ -182,17 +182,19 @@ private:
 public:
 
     bool send_json_http(std::vector<bbox_t> cur_bbox_vec, std::vector<std::string> obj_names, int frame_id,
-        std::string filename = std::string(), int timeout = 400000, int port = 8070)
+        std::string filename = std::string(), int frame_width = 0, int frame_height = 0, int timeout = 400000, int port = 8070)
     {
         std::string send_str;
 
         char *tmp_buf = (char *)calloc(1024, sizeof(char));
-        if (!filename.empty()) {
-            sprintf(tmp_buf, "{\n \"frame_id\":%d, \n \"filename\":\"%s\", \n \"objects\": [ \n", frame_id, filename.c_str());
-        }
-        else {
-            sprintf(tmp_buf, "{\n \"frame_id\":%d, \n \"objects\": [ \n", frame_id);
-        }
+        // if (!filename.empty()) {
+        //     sprintf(tmp_buf, "{\n \"frame_id\":%d, \n \"filename\":\"%s\", \n \"video_size\:{\"width\":%d, \"height\":%d}, \n \"objects\": [ \n", frame_id, filename.c_str(),frame_width, frame_height);
+        // }
+        // else {
+        //     sprintf(tmp_buf, "{\n \"frame_id\":%d, \n \"objects\": [ \n", frame_id);
+        // }
+        sprintf(tmp_buf, "{\n \"frame_id\":%d, \n \"video_size\":{\"width\":%d, \"height\":%d}, \n \"objects\": [ \n", frame_id,frame_width, frame_height);
+        
         send_str = tmp_buf;
         free(tmp_buf);
 

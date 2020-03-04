@@ -594,7 +594,7 @@ int main(int argc, char *argv[])
                         do {
                             detection_data = draw2net.receive();
 
-                            detector.send_json_http(detection_data.result_vec, obj_names, detection_data.frame_id, filename);
+                            detector.send_json_http(detection_data.result_vec, obj_names, detection_data.frame_id, filename, frame_size.width, frame_size.height);
 
                         } while (!detection_data.exit_flag);
                     }
